@@ -1,6 +1,5 @@
 /.idea/
 /Debug/
-/build/
 *.asmo
 *.bin
 *.d
