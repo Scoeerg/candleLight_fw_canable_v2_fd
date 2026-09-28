@@ -127,6 +127,20 @@ function(dfu_flash target)
 	endif()
 endfunction()
 
+## add st-link flashing
+set(STFLASH_TARGET "canable2_fw" CACHE STRING "Firmware image for the stflash target")
+function(stlink_flash target)
+    add_custom_target(stflash-${target}
+        COMMAND st-flash --reset write ${CMAKE_CURRENT_BINARY_DIR}/${STFLASH_TARGET}.bin 0x08000000
+        DEPENDS ${target}.bin
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Flashing ${target}.bin with st-flash"
+        VERBATIM
+    )
+endfunction()
+
+
+
 
 
 ######### ldscripts are mostly identical.
@@ -220,6 +234,7 @@ function(add_target_common TGTNAME CPU_FAMILY)
 	target_link_options(${TGTNAME}_fw PRIVATE -T ${CPU_FAMILY}_processed.ld)
 	make_bin_file(${TGTNAME}_fw)
 	dfu_flash(${TGTNAME}_fw)
+	stlink_flash(${TGTNAME}_fw)
 	show_object_size(${TGTNAME}_fw)
 endfunction()
 
