@@ -28,11 +28,18 @@
             "dependsOn": ["CMake configure"]
         },
         {
-            "label": "Build clean",
-            "group": "build",
+            "label": "Build Clean",
             "type": "shell",
-            "command": "make",
-            "args": ["clean"]
+            "group": "build",
+            "command": "rm -rf build && mkdir -p build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            }
         },
         {
             "label": "STflash",
