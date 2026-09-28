@@ -117,6 +117,36 @@ THE SOFTWARE.
 	#define LEDTX_Mode GPIO_MODE_OUTPUT_PP
 	#define LEDTX_Active_High 0
 
+	#define nCANSTBY_Port		 GPIOA
+	#define nCANSTBY_Pin		 GPIO_PIN_0    /* control xceiver standby, active low */
+	#define nCANSTBY_Active_High 0
+
+#elif defined BOARD_mcs_canable2
+	#define USBD_PRODUCT_STRING_FS			(uint8_t*) "MCS CANable2"
+	#define USBD_MANUFACTURER_STRING		(uint8_t*) "MCS"
+	#define DFU_INTERFACE_STRING_FS			(uint8_t*) "MCS CANable2 firmware upgrade interface"
+
+	#define TIM2_CLOCK_SPEED		 160000000
+
+	#define CAN_INTERFACE            FDCAN1
+	#define CAN_CLOCK_SPEED          160000000
+	#define NUM_CAN_CHANNEL          1
+
+	// transceiver STBY / VIO hardwired, not controlled by the MCU
+	// both LEDs are wired on their cathode side: pull low to turn on
+	// LEDRX = activity (flashes on RX and TX), LEDTX = status (on while USB is configured)
+	#define LED_STATUS_ACTIVITY
+
+	#define LEDRX_GPIO_Port GPIOA
+	#define LEDRX_Pin GPIO_PIN_0	/* WORD_LED: activity */
+	#define LEDRX_Mode GPIO_MODE_OUTPUT_PP
+	#define LEDRX_Active_High 0
+
+	#define LEDTX_GPIO_Port GPIOA
+	#define LEDTX_Pin GPIO_PIN_15	/* STATUS_LED: USB up */
+	#define LEDTX_Mode GPIO_MODE_OUTPUT_PP
+	#define LEDTX_Active_High 0
+
 #elif defined BOARD_CANable_MKS2_Pro
 	#define USBD_PRODUCT_STRING_FS			(uint8_t*) "CANable-MKS2 Pro gs_usb"
 	#define USBD_MANUFACTURER_STRING		(uint8_t*) "makerbase"

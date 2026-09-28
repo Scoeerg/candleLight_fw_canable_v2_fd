@@ -49,7 +49,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
-            "args": ["-j4", "stflash-canable2_fw"]
+            "args": ["-j4", "stflash-mcs_canable2_fw"]
         }
     ]
 }

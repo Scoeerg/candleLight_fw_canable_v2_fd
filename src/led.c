@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <string.h>
 
+#include "config.h"
 #include "led.h"
 #include "hal_include.h"
 #include "util.h"
@@ -85,7 +86,18 @@ void led_run_sequence(led_data_t *leds, const led_seq_step_t *sequence, int32_t 
 }
 
 void led_indicate_trx(led_data_t *leds, led_num_t num) {
+#ifdef LED_STATUS_ACTIVITY
+	// single activity LED for both directions
+	(void)num;
+	leds->led_state[led_rx].blink_request = 1;
+#else
 	leds->led_state[num].blink_request = 1;
+#endif
+}
+
+void led_set_status(led_data_t *leds, bool on)
+{
+	leds->status_on = on;
 }
 
 static void led_trx_blinker(led_state_t *ledstate, uint32_t now) {
@@ -96,6 +108,18 @@ static void led_trx_blinker(led_state_t *ledstate, uint32_t now) {
 	}
 }
 
+#ifdef LED_STATUS_ACTIVITY
+// inverse of normal mode: dark at idle, flashes on for traffic
+static void led_update_activity(led_state_t *led, uint32_t now)
+{
+	if (led->blink_request) {
+		led->blink_request = 0;
+		led_trx_blinker(led, now);
+	}
+
+	led_set(led, !SEQ_ISPASSED(now, led->off_until));
+}
+#else
 static void led_update_normal_mode(led_state_t *led, uint32_t now)
 {
 	if (led->blink_request) {
@@ -105,6 +129,7 @@ static void led_update_normal_mode(led_state_t *led, uint32_t now)
 
 	led_set(led, SEQ_ISPASSED(now, led->off_until));
 }
+#endif
 
 static void led_update_sequence(led_data_t *leds)
 {
@@ -149,6 +174,17 @@ void led_update(led_data_t *leds)
 
 	switch (leds->mode) {
 
+#ifdef LED_STATUS_ACTIVITY
+		case led_mode_off:
+			led_set(&leds->led_state[led_rx], false);
+			led_set(&leds->led_state[led_tx], leds->status_on);
+			break;
+
+		case led_mode_normal:
+			led_update_activity(&leds->led_state[led_rx], now);
+			led_set(&leds->led_state[led_tx], leds->status_on);
+			break;
+#else
 		case led_mode_off:
 			led_set(&leds->led_state[led_rx], false);
 			led_set(&leds->led_state[led_tx], false);
@@ -158,6 +194,7 @@ void led_update(led_data_t *leds)
 			led_update_normal_mode(&leds->led_state[led_rx], now);
 			led_update_normal_mode(&leds->led_state[led_tx], now);
 			break;
+#endif
 
 		case led_mode_sequence:
 			led_update_sequence(leds);

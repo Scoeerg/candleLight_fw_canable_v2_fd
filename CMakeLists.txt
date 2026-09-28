@@ -128,11 +128,10 @@ function(dfu_flash target)
 endfunction()
 
 ## add st-link flashing
-set(STFLASH_TARGET "canable2_fw" CACHE STRING "Firmware image for the stflash target")
 function(stlink_flash target)
     add_custom_target(stflash-${target}
-        COMMAND st-flash --reset write ${CMAKE_CURRENT_BINARY_DIR}/${STFLASH_TARGET}.bin 0x08000000
-        DEPENDS ${target}.bin
+        COMMAND st-flash --reset write ${CMAKE_CURRENT_BINARY_DIR}/${target}.bin 0x08000000
+        DEPENDS ${target}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Flashing ${target}.bin with st-flash"
         VERBATIM
@@ -286,7 +285,7 @@ endfunction()
 
 ########## generate list of targets.
 # the "_fw" part is appended automatically
-set(TGTG431_LIST "canable2" "CANable_MKS2_Pro")
+set(TGTG431_LIST "canable2" "CANable_MKS2_Pro" "mcs_canable2")
 
 foreach (TGTNAME IN LISTS TGTF042_LIST)
 	option(BUILD_${TGTNAME} "Build firmware for \"${TGTNAME}\" (default=yes)" ON)

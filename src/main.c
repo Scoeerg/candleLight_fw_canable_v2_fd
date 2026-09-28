@@ -196,6 +196,7 @@ int main(void)
 			}
 		}
 
+		led_set_status(&channel->leds, hUSB.dev_state == USBD_STATE_CONFIGURED);
 		led_update(&channel->leds);
 
 		if (USBD_GS_CAN_DfuDetachRequested(&hUSB)) {
